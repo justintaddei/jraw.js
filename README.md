@@ -1,10 +1,10 @@
 # Jraw
 
-![npm](https://img.shields.io/npm/v/jraw.svg)
-![npm](https://img.shields.io/npm/dt/jraw.svg)
+![npm](https://img.shields.io/npm/v/jraw.js.svg)
+![npm](https://img.shields.io/npm/dt/jraw.js.svg)
 ![](https://img.shields.io/badge/status-awesome-red.svg?style=flat)
 
-A JavaScript library for manipulating HTML canvases
+A JavaScript library for manipulating HTML canvases **(earily preview)**
 
 ## Installation
 
@@ -27,11 +27,6 @@ import Jraw from 'jraw'
 
 const jraw = new Jraw()
 ```
-
-## Support
-
-Jraw supports any browser with `AudioContext` or `webkitAudioContext` support  
-See [caniuse.com](https://caniuse.com/#feat=audio-api) for details
 
 ## License
 
