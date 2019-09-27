@@ -1,6 +1,7 @@
 {
   "extends": ["tslint:recommended", "tslint-config-prettier"],
   "rules": {
-    "curly": false
+    "curly": false,
+    "only-arrow-functions": false
   }
 }

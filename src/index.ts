@@ -13,10 +13,11 @@ window.requestAnimationFrame =
   window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
   function(callback) {
-    return window.setTimeout(function() {
+    return window.setTimeout(() => {
       callback(Date.now())
     }, 1000 / 60)
   }
+
 window.cancelAnimationFrame =
   window.cancelAnimationFrame ||
   window.webkitCancelAnimationFrame ||
@@ -58,7 +59,7 @@ const mathExt = {
    * @param max The maximum value
    */
   random(max?: number, min?: number) {
-    var r = Math.random()
+    const r = Math.random()
     if (!max) {
       return r
     }
@@ -95,12 +96,12 @@ const mathExt = {
    * @param theta The angle in radians
    */
   toCartesian(radius: number, theta: number) {
-    var x = radius * Math.cos(theta)
-    var y = radius * Math.sin(theta)
+    const x = radius * Math.cos(theta)
+    const y = radius * Math.sin(theta)
 
     return {
-      x: x,
-      y: y
+      x,
+      y
     }
   },
   /**
@@ -110,25 +111,28 @@ const mathExt = {
     const vec = new Vector(x, y)
 
     return {
-      theta: vec.angle(),
-      radius: vec.magnitude()
+      radius: vec.magnitude(),
+      theta: vec.angle()
     }
   }
 }
 
 // Jraw
 export default class Jraw {
-  canvasElement: HTMLCanvasElement
-  context: CanvasRenderingContext2D
-  connectPaths: boolean = false
-  width: number
-  height: number
-  translation: Vector = new Vector(0, 0)
-  scaled: Vector = new Vector(1, 1)
-  rotation: number = 0
-  matrixStack: IMatrix[]
+  public static math = mathExt
 
-  static math = mathExt
+  public canvasElement: HTMLCanvasElement
+  public context: CanvasRenderingContext2D
+  public connectPaths: boolean = false
+  public width: number
+  public height: number
+  public translation: Vector = new Vector(0, 0)
+  public scaled: Vector = new Vector(1, 1)
+  public rotation: number = 0
+  public matrixStack: IMatrix[]
+  public animation?: (timestamp: number) => void
+
+  private animationRunning: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvasElement = canvas
@@ -137,65 +141,51 @@ export default class Jraw {
     this.height = this.canvasElement.height
     this.matrixStack = [
       {
-        translation: this.translation.clone(),
+        rotation: 0,
         scale: this.scaled.clone(),
-        rotation: 0
+        translation: this.translation.clone()
       }
     ]
 
     this.animationLoop = this.animationLoop.bind(this)
   }
 
-  animation?: (timestamp: number) => void
-
-  private _animationRunning: boolean = false
-  get animating() {
-    return this._animationRunning
+  public get animating() {
+    return this.animationRunning
   }
-  startAnimation() {
-    if (this._animationRunning) return
+  public startAnimation() {
+    if (this.animationRunning) return
 
-    this._animationRunning = true
+    this.animationRunning = true
     requestAnimationFrame(this.animationLoop)
   }
 
-  private animationLoop(timestamp: number) {
-    if (!this._animationRunning || typeof this.animation !== 'function') {
-      this._animationRunning = false
-      return
-    }
-
-    this.animation(timestamp)
-
-    requestAnimationFrame(this.animationLoop)
+  public stopAnimation() {
+    this.animationRunning = false
   }
 
-  stopAnimation() {
-    this._animationRunning = false
-  }
-
-  toggleAnimaion() {
+  public toggleAnimaion() {
     if (this.animating) this.stopAnimation()
     else this.startAnimation()
   }
 
-  setTextAlign(mode: CanvasTextAlign) {
+  public setTextAlign(mode: CanvasTextAlign) {
     this.context.textAlign = mode
     return this
   }
 
-  setTextBaseline(mode: CanvasTextBaseline) {
+  public setTextBaseline(mode: CanvasTextBaseline) {
     this.context.textBaseline = mode
     return this
   }
 
-  setFont(font: string) {
+  public setFont(font: string) {
     this.context.font = font
     return this
   }
 
-  text(
-    string: string,
+  public text(
+    str: string,
     x: number = 0,
     y: number = 0,
     font: string = this.context.font,
@@ -219,7 +209,7 @@ export default class Jraw {
         const previousColor = this.context.strokeStyle
 
         this.context.fillStyle = color
-        this.context.fillText(string, x, y, maxWidth)
+        this.context.fillText(str, x, y, maxWidth)
         this.context.fillStyle = previousColor
         this.setTextAlign(previousTextAlign)
           .setTextBaseline(previousBaseline)
@@ -231,7 +221,7 @@ export default class Jraw {
         const previousColor = this.context.strokeStyle
 
         this.context.strokeStyle = color
-        this.context.strokeText(string, x, y, maxWidth)
+        this.context.strokeText(str, x, y, maxWidth)
         this.context.strokeStyle = previousColor
         this.setTextAlign(previousTextAlign)
           .setTextBaseline(previousBaseline)
@@ -242,62 +232,62 @@ export default class Jraw {
     }
   }
 
-  resizeCanvas(x: number, y: number) {
+  public resizeCanvas(x: number, y: number) {
     this.width = this.canvasElement.width = x
     this.height = this.canvasElement.height = y
   }
 
-  clear() {
+  public clear() {
     this.context.clearRect(0 - this.translation.x, 0 - this.translation.y, this.width, this.height)
     this.newPath()
     return this
   }
-  save() {
+  public save() {
     this.context.save()
     return this
   }
-  restore() {
+  public restore() {
     this.context.restore()
     return this
   }
 
-  scale(x: number, y: number) {
+  public scale(x: number, y: number) {
     y = y || x
     this.context.scale(x, y)
     this.scaled.add(new Vector(x, y))
 
     return this
   }
-  rotate(angle: number) {
+  public rotate(angle: number) {
     this.context.rotate(angle)
     this.rotation += angle
 
     return this
   }
-  translate(x: number, y: number) {
+  public translate(x: number, y: number) {
     this.context.translate(x, y)
     this.translation.add(new Vector(x, y))
     return this
   }
-  pushMatrix() {
+  public pushMatrix() {
     this.matrixStack.push({
-      translation: this.translation.clone(),
+      rotation: this.rotation,
       scale: this.scaled.clone(),
-      rotation: this.rotation
+      translation: this.translation.clone()
     })
     return this
   }
-  resetMatrix() {
+  public resetMatrix() {
     this.context.setTransform(1, 0, 0, 1, 0, 0)
     this.translation = new Vector(0, 0)
     this.scaled = new Vector(0, 0)
     this.rotation = 0
     return this
   }
-  popMatrix() {
+  public popMatrix() {
     this.resetMatrix()
 
-    var stack = this.matrixStack.pop()
+    const stack = this.matrixStack.pop()
     if (!stack) return this
 
     this.translate(stack.translation.x, stack.translation.y)
@@ -306,16 +296,16 @@ export default class Jraw {
     return this
   }
 
-  setFill(color: string | CanvasGradient | CanvasPattern) {
+  public setFill(color: string | CanvasGradient | CanvasPattern) {
     this.context.fillStyle = color
     return this
   }
-  setStroke(color: string | CanvasGradient | CanvasPattern) {
+  public setStroke(color: string | CanvasGradient | CanvasPattern) {
     this.context.strokeStyle = color
     return this
   }
 
-  stroke(
+  public stroke(
     color: string | CanvasGradient | CanvasPattern = this.context.strokeStyle,
     width: number = this.context.lineWidth
   ) {
@@ -328,7 +318,7 @@ export default class Jraw {
     this.setStroke(previousStroke)
     return this
   }
-  fill(color: string | CanvasGradient | CanvasPattern = this.context.fillStyle) {
+  public fill(color: string | CanvasGradient | CanvasPattern = this.context.fillStyle) {
     const previousColor = this.context.fillStyle
 
     this.context.fillStyle = color
@@ -337,14 +327,14 @@ export default class Jraw {
 
     return this
   }
-  rect(x: number, y: number, w: number, h: number) {
+  public rect(x: number, y: number, w: number, h: number) {
     if (!this.connectPaths) {
       this.newPath()
     }
     this.context.rect(x, y, w, h)
     return this
   }
-  triangle(c1X: any, c1Y: any, c2X: any, c2Y: any, c3X: any, c3Y: any) {
+  public triangle(c1X: any, c1Y: any, c2X: any, c2Y: any, c3X: any, c3Y: any) {
     if (!this.connectPaths) {
       this.newPath()
     }
@@ -354,7 +344,7 @@ export default class Jraw {
     return this
   }
 
-  circle(x: number, y: number, r: number) {
+  public circle(x: number, y: number, r: number) {
     if (!this.connectPaths) {
       this.newPath()
     }
@@ -362,49 +352,49 @@ export default class Jraw {
     return this
   }
 
-  newPath() {
+  public newPath() {
     this.context.beginPath()
     return this
   }
-  closePath() {
+  public closePath() {
     this.context.closePath()
     return this
   }
 
-  arc(x: number, y: number, r: number, sA: number, eA: number, counterclockwise: boolean | undefined) {
+  public arc(x: number, y: number, r: number, sA: number, eA: number, counterclockwise: boolean | undefined) {
     if (!this.connectPaths) {
       this.newPath()
     }
     this.context.arc(x, y, r, sA, eA, counterclockwise)
     return this
   }
-  lineTo(x: number, y: number) {
+  public lineTo(x: number, y: number) {
     this.context.lineTo(x, y)
     return this
   }
-  moveTo(x: number, y: number) {
+  public moveTo(x: number, y: number) {
     this.context.moveTo(x, y)
     return this
   }
-  line(...points: number[]) {
+  public line(...points: number[]) {
     if (!this.connectPaths) {
       this.newPath()
     }
 
     this.moveTo(points[0], points[1])
 
-    for (var i = 2; i < points.length; i += 2) {
+    for (let i = 2; i < points.length; i += 2) {
       this.lineTo(points[i], points[i + 1])
     }
 
     return this
   }
-  setStrokeWidth(width: number) {
+  public setStrokeWidth(width: number) {
     this.context.lineWidth = width
     return this
   }
 
-  image(img: CanvasImageSource, x: number, y: number, w?: number, h?: number) {
+  public image(img: CanvasImageSource, x: number, y: number, w?: number, h?: number) {
     if (w && h) {
       this.context.drawImage(img, x, y, w, h)
     } else {
@@ -412,5 +402,16 @@ export default class Jraw {
     }
 
     return this
+  }
+
+  private animationLoop(timestamp: number) {
+    if (!this.animationRunning || typeof this.animation !== 'function') {
+      this.animationRunning = false
+      return
+    }
+
+    this.animation(timestamp)
+
+    requestAnimationFrame(this.animationLoop)
   }
 }
