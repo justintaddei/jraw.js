@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Jraw.js</title>
+
+  <style>
+    canvas {
+      border: 1px solid #000;
+      width: 300px;
+      height: 300px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas width="2000px" height="2000px"></canvas>
+
+  <script src="../releases/iife/jraw.js"></script>
+
+  <script>
+    const canvas = document.querySelector('canvas')
+    const jraw = new Jraw(canvas)
+
+    let deg = 0;
+    jraw.translate(jraw.width, 300)
+
+    jraw.setStrokeWidth(8)
+
+    jraw.animation = (time) => {
+      jraw.clear();
+
+      const r = Jraw.math.toRad
+      jraw.arc(0, 0, (jraw.width / 2) * 1.100, r(0), r(45)).stroke('red')
+      jraw.arc(0, 0, (jraw.width / 2) * 1.200, r(75), r(180)).stroke('orange')
+      jraw.arc(0, 0, (jraw.width / 2) * 1.250, r(127), r(165)).stroke('goldenrod')
+      jraw.arc(0, 0, (jraw.width / 2) * 1.300, r(190), r(270), true).stroke('#333')
+      jraw.arc(0, 0, (jraw.width / 2) * 1.325, r(90), r(180)).stroke('lightblue')
+      jraw.arc(0, 0, (jraw.width / 2) * 1.350, r(-100), r(-230)).stroke('#bada55')
+
+      jraw.rotate(r(-1))
+    }
+    jraw.startAnimation();
+
+    canvas.onclick = () => jraw.toggleAnimation();
+
+  </script>
+</body>
+
+</html>

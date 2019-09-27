@@ -1,0 +1,53 @@
+{
+  "name": "jraw.js",
+  "version": "0.1.0",
+  "description": "A JavaScript library for manipulating HTML canvases",
+  "main": "releases/cjs/js/index.js",
+  "esnext": "releases/esnext/js/index.js",
+  "types": "releases/esnext/definitions/index.d.ts",
+  "scripts": {
+    "test": "exit 0",
+    "build": "gulp",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justintaddei/jraw.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/justintaddei/jraw.js/issues"
+  },
+  "homepage": "https://github.com/justintaddei/jraw.js",
+  "keywords": [
+    "webaudio",
+    "note",
+    "audio",
+    "sound",
+    "effect",
+    "jraw.js",
+    "keyboard",
+    "instrument"
+  ],
+  "files": [
+    "releases/**/*"
+  ],
+  "author": "Justin Taddei",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-rollup": "^2.16.2",
+    "gulp-typescript": "^5.0.0",
+    "merge2": "^1.2.3",
+    "prettier": "^1.16.4",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.3"
+  }
+}
