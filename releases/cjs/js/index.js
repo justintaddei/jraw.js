@@ -97,8 +97,8 @@ var mathExt = {
     toPolar: function (x, y) {
         var vec = new Vector_1.Vector(x, y);
         return {
-            theta: vec.angle(),
-            radius: vec.magnitude()
+            radius: vec.magnitude(),
+            theta: vec.angle()
         };
     }
 };
@@ -109,43 +109,35 @@ var Jraw = /** @class */ (function () {
         this.translation = new Vector_1.Vector(0, 0);
         this.scaled = new Vector_1.Vector(1, 1);
         this.rotation = 0;
-        this._animationRunning = false;
+        this.animationRunning = false;
         this.canvasElement = canvas;
         this.context = this.canvasElement.getContext('2d');
         this.width = this.canvasElement.width;
         this.height = this.canvasElement.height;
         this.matrixStack = [
             {
-                translation: this.translation.clone(),
+                rotation: 0,
                 scale: this.scaled.clone(),
-                rotation: 0
+                translation: this.translation.clone()
             }
         ];
         this.animationLoop = this.animationLoop.bind(this);
     }
     Object.defineProperty(Jraw.prototype, "animating", {
         get: function () {
-            return this._animationRunning;
+            return this.animationRunning;
         },
         enumerable: true,
         configurable: true
     });
     Jraw.prototype.startAnimation = function () {
-        if (this._animationRunning)
+        if (this.animationRunning)
             return;
-        this._animationRunning = true;
-        requestAnimationFrame(this.animationLoop);
-    };
-    Jraw.prototype.animationLoop = function (timestamp) {
-        if (!this._animationRunning || typeof this.animation !== 'function') {
-            this._animationRunning = false;
-            return;
-        }
-        this.animation(timestamp);
+        this.animationRunning = true;
         requestAnimationFrame(this.animationLoop);
     };
     Jraw.prototype.stopAnimation = function () {
-        this._animationRunning = false;
+        this.animationRunning = false;
     };
     Jraw.prototype.toggleAnimaion = function () {
         if (this.animating)
@@ -165,7 +157,7 @@ var Jraw = /** @class */ (function () {
         this.context.font = font;
         return this;
     };
-    Jraw.prototype.text = function (string, x, y, font, align, baseline, maxWidth) {
+    Jraw.prototype.text = function (str, x, y, font, align, baseline, maxWidth) {
         var _this = this;
         if (x === void 0) { x = 0; }
         if (y === void 0) { y = 0; }
@@ -184,7 +176,7 @@ var Jraw = /** @class */ (function () {
                 if (color === void 0) { color = _this.context.strokeStyle; }
                 var previousColor = _this.context.strokeStyle;
                 _this.context.fillStyle = color;
-                _this.context.fillText(string, x, y, maxWidth);
+                _this.context.fillText(str, x, y, maxWidth);
                 _this.context.fillStyle = previousColor;
                 _this.setTextAlign(previousTextAlign)
                     .setTextBaseline(previousBaseline)
@@ -195,7 +187,7 @@ var Jraw = /** @class */ (function () {
                 if (color === void 0) { color = _this.context.strokeStyle; }
                 var previousColor = _this.context.strokeStyle;
                 _this.context.strokeStyle = color;
-                _this.context.strokeText(string, x, y, maxWidth);
+                _this.context.strokeText(str, x, y, maxWidth);
                 _this.context.strokeStyle = previousColor;
                 _this.setTextAlign(previousTextAlign)
                     .setTextBaseline(previousBaseline)
@@ -239,9 +231,9 @@ var Jraw = /** @class */ (function () {
     };
     Jraw.prototype.pushMatrix = function () {
         this.matrixStack.push({
-            translation: this.translation.clone(),
+            rotation: this.rotation,
             scale: this.scaled.clone(),
-            rotation: this.rotation
+            translation: this.translation.clone()
         });
         return this;
     };
@@ -360,6 +352,14 @@ var Jraw = /** @class */ (function () {
             this.context.drawImage(img, x, y);
         }
         return this;
+    };
+    Jraw.prototype.animationLoop = function (timestamp) {
+        if (!this.animationRunning || typeof this.animation !== 'function') {
+            this.animationRunning = false;
+            return;
+        }
+        this.animation(timestamp);
+        requestAnimationFrame(this.animationLoop);
     };
     Jraw.math = mathExt;
     return Jraw;

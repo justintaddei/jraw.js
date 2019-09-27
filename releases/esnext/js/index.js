@@ -11,7 +11,7 @@ window.requestAnimationFrame =
     window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         function (callback) {
-            return window.setTimeout(function () {
+            return window.setTimeout(() => {
                 callback(Date.now());
             }, 1000 / 60);
         };
@@ -47,7 +47,7 @@ const mathExt = {
      * @param max The maximum value
      */
     random(max, min) {
-        var r = Math.random();
+        let r = Math.random();
         if (!max) {
             return r;
         }
@@ -82,11 +82,11 @@ const mathExt = {
      * @param theta The angle in radians
      */
     toCartesian(radius, theta) {
-        var x = radius * Math.cos(theta);
-        var y = radius * Math.sin(theta);
+        const x = radius * Math.cos(theta);
+        const y = radius * Math.sin(theta);
         return {
-            x: x,
-            y: y
+            x,
+            y
         };
     },
     /**
@@ -95,8 +95,8 @@ const mathExt = {
     toPolar(x, y) {
         const vec = new Vector(x, y);
         return {
-            theta: vec.angle(),
-            radius: vec.magnitude()
+            radius: vec.magnitude(),
+            theta: vec.angle()
         };
     }
 };
@@ -107,39 +107,31 @@ export default class Jraw {
         this.translation = new Vector(0, 0);
         this.scaled = new Vector(1, 1);
         this.rotation = 0;
-        this._animationRunning = false;
+        this.animationRunning = false;
         this.canvasElement = canvas;
         this.context = this.canvasElement.getContext('2d');
         this.width = this.canvasElement.width;
         this.height = this.canvasElement.height;
         this.matrixStack = [
             {
-                translation: this.translation.clone(),
+                rotation: 0,
                 scale: this.scaled.clone(),
-                rotation: 0
+                translation: this.translation.clone()
             }
         ];
         this.animationLoop = this.animationLoop.bind(this);
     }
     get animating() {
-        return this._animationRunning;
+        return this.animationRunning;
     }
     startAnimation() {
-        if (this._animationRunning)
+        if (this.animationRunning)
             return;
-        this._animationRunning = true;
-        requestAnimationFrame(this.animationLoop);
-    }
-    animationLoop(timestamp) {
-        if (!this._animationRunning || typeof this.animation !== 'function') {
-            this._animationRunning = false;
-            return;
-        }
-        this.animation(timestamp);
+        this.animationRunning = true;
         requestAnimationFrame(this.animationLoop);
     }
     stopAnimation() {
-        this._animationRunning = false;
+        this.animationRunning = false;
     }
     toggleAnimaion() {
         if (this.animating)
@@ -159,7 +151,7 @@ export default class Jraw {
         this.context.font = font;
         return this;
     }
-    text(string, x = 0, y = 0, font = this.context.font, align = this.context.textAlign, baseline = this.context.textBaseline, maxWidth = Infinity) {
+    text(str, x = 0, y = 0, font = this.context.font, align = this.context.textAlign, baseline = this.context.textBaseline, maxWidth = Infinity) {
         const previousTextAlign = this.context.textAlign;
         const previousBaseline = this.context.textBaseline;
         const previousFont = this.context.font;
@@ -170,7 +162,7 @@ export default class Jraw {
             fill: (color = this.context.strokeStyle) => {
                 const previousColor = this.context.strokeStyle;
                 this.context.fillStyle = color;
-                this.context.fillText(string, x, y, maxWidth);
+                this.context.fillText(str, x, y, maxWidth);
                 this.context.fillStyle = previousColor;
                 this.setTextAlign(previousTextAlign)
                     .setTextBaseline(previousBaseline)
@@ -180,7 +172,7 @@ export default class Jraw {
             stroke: (color = this.context.strokeStyle) => {
                 const previousColor = this.context.strokeStyle;
                 this.context.strokeStyle = color;
-                this.context.strokeText(string, x, y, maxWidth);
+                this.context.strokeText(str, x, y, maxWidth);
                 this.context.strokeStyle = previousColor;
                 this.setTextAlign(previousTextAlign)
                     .setTextBaseline(previousBaseline)
@@ -224,9 +216,9 @@ export default class Jraw {
     }
     pushMatrix() {
         this.matrixStack.push({
-            translation: this.translation.clone(),
+            rotation: this.rotation,
             scale: this.scaled.clone(),
-            rotation: this.rotation
+            translation: this.translation.clone()
         });
         return this;
     }
@@ -239,7 +231,7 @@ export default class Jraw {
     }
     popMatrix() {
         this.resetMatrix();
-        var stack = this.matrixStack.pop();
+        const stack = this.matrixStack.pop();
         if (!stack)
             return this;
         this.translate(stack.translation.x, stack.translation.y);
@@ -321,7 +313,7 @@ export default class Jraw {
             this.newPath();
         }
         this.moveTo(points[0], points[1]);
-        for (var i = 2; i < points.length; i += 2) {
+        for (let i = 2; i < points.length; i += 2) {
             this.lineTo(points[i], points[i + 1]);
         }
         return this;
@@ -338,6 +330,14 @@ export default class Jraw {
             this.context.drawImage(img, x, y);
         }
         return this;
+    }
+    animationLoop(timestamp) {
+        if (!this.animationRunning || typeof this.animation !== 'function') {
+            this.animationRunning = false;
+            return;
+        }
+        this.animation(timestamp);
+        requestAnimationFrame(this.animationLoop);
     }
 }
 Jraw.math = mathExt;

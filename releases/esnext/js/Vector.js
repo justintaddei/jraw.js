@@ -78,7 +78,7 @@ export class Vector {
      * Normalizes this Vector (i.e. Reduces it to a magnitude of `1`)
      */
     normalize() {
-        var m = this.magnitude();
+        const m = this.magnitude();
         if (m > 0) {
             this.divide(m);
         }

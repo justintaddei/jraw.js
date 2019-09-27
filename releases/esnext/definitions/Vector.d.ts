@@ -1,6 +1,4 @@
 export declare class Vector {
-    x: number;
-    y: number;
     /**
      * Sums to vectors together
      */
@@ -9,6 +7,8 @@ export declare class Vector {
      * Subtracts `vector2` from `vector1` (e.i. `vector1 - vector2`)
      */
     static subtract(vector1: Vector, vector2: Vector): Vector;
+    x: number;
+    y: number;
     constructor(x: number, y: number);
     /**
      * Clones the `Vector`

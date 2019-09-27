@@ -59,7 +59,7 @@ const mathExt = {
    * @param max The maximum value
    */
   random(max?: number, min?: number) {
-    const r = Math.random()
+    let r = Math.random()
     if (!max) {
       return r
     }

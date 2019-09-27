@@ -5,15 +5,6 @@ interface IMatrix {
     rotation: number;
 }
 export default class Jraw {
-    canvasElement: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    connectPaths: boolean;
-    width: number;
-    height: number;
-    translation: Vector;
-    scaled: Vector;
-    rotation: number;
-    matrixStack: IMatrix[];
     static math: {
         /**
          * `Math.PI * 2`
@@ -56,22 +47,30 @@ export default class Jraw {
          * Converts cartesian coordinates to polar coordinates
          */
         toPolar(x: number, y: number): {
-            theta: number;
             radius: number;
+            theta: number;
         };
     };
-    constructor(canvas: HTMLCanvasElement);
+    canvasElement: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    connectPaths: boolean;
+    width: number;
+    height: number;
+    translation: Vector;
+    scaled: Vector;
+    rotation: number;
+    matrixStack: IMatrix[];
     animation?: (timestamp: number) => void;
-    private _animationRunning;
+    private animationRunning;
+    constructor(canvas: HTMLCanvasElement);
     readonly animating: boolean;
     startAnimation(): void;
-    private animationLoop;
     stopAnimation(): void;
     toggleAnimaion(): void;
     setTextAlign(mode: CanvasTextAlign): this;
     setTextBaseline(mode: CanvasTextBaseline): this;
     setFont(font: string): this;
-    text(string: string, x?: number, y?: number, font?: string, align?: CanvasTextAlign, baseline?: CanvasTextBaseline, maxWidth?: number): {
+    text(str: string, x?: number, y?: number, font?: string, align?: CanvasTextAlign, baseline?: CanvasTextBaseline, maxWidth?: number): {
         fill: (color?: string | CanvasGradient | CanvasPattern) => Jraw;
         stroke: (color?: string | CanvasGradient | CanvasPattern) => Jraw;
     };
@@ -100,5 +99,6 @@ export default class Jraw {
     line(...points: number[]): this;
     setStrokeWidth(width: number): this;
     image(img: CanvasImageSource, x: number, y: number, w?: number, h?: number): this;
+    private animationLoop;
 }
 export {};
