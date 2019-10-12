@@ -1,6 +1,6 @@
 {
   "name": "jraw.js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A JavaScript library for manipulating HTML canvases",
   "main": "releases/cjs/js/index.js",
   "esnext": "releases/esnext/js/index.js",

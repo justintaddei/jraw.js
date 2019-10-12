@@ -416,4 +416,4 @@ class Jraw {
   }
 }
 
-export { Jraw, Vector };
+export { Jraw, Vector }
