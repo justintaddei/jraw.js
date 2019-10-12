@@ -101,7 +101,7 @@ const mathExt = {
     }
 };
 // Jraw
-export default class Jraw {
+class Jraw {
     constructor(canvas) {
         this.connectPaths = false;
         this.translation = new Vector(0, 0);
@@ -341,3 +341,4 @@ export default class Jraw {
     }
 }
 Jraw.math = mathExt;
+export { Jraw, Vector };

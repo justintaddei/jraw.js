@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vector_1 = require("./Vector");
+exports.Vector = Vector_1.Vector;
 /*
 
 Jraw.js - A JavaScript library for manipulating HTML canvases
@@ -364,4 +365,4 @@ var Jraw = /** @class */ (function () {
     Jraw.math = mathExt;
     return Jraw;
 }());
-exports.default = Jraw;
+exports.Jraw = Jraw;

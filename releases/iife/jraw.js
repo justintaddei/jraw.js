@@ -1,4 +1,4 @@
-var Jraw = (function () {
+var Jraw = (function (exports) {
 'use strict';
 
 // A mathematical vector
@@ -463,6 +463,9 @@ var Jraw = /** @class */ (function () {
     return Jraw;
 }());
 
-return Jraw;
+exports.Jraw = Jraw;
+exports.Vector = Vector;
 
-}());
+return exports;
+
+}({}));

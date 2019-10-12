@@ -118,7 +118,7 @@ const mathExt = {
 }
 
 // Jraw
-export default class Jraw {
+class Jraw {
   public static math = mathExt
 
   public canvasElement: HTMLCanvasElement
@@ -415,3 +415,5 @@ export default class Jraw {
     requestAnimationFrame(this.animationLoop)
   }
 }
+
+export { Jraw, Vector };

@@ -4,7 +4,7 @@ interface IMatrix {
     scale: Vector;
     rotation: number;
 }
-export default class Jraw {
+declare class Jraw {
     static math: {
         /**
          * `Math.PI * 2`
@@ -101,4 +101,4 @@ export default class Jraw {
     image(img: CanvasImageSource, x: number, y: number, w?: number, h?: number): this;
     private animationLoop;
 }
-export {};
+export { Jraw, Vector };
